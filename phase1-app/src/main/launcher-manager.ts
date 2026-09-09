@@ -15,7 +15,7 @@
  */
 import { spawn, ChildProcess } from 'node:child_process';
 import { existsSync, mkdirSync, createWriteStream } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { buildForgeCommand, type BuildOptions } from './forge-command';
 import type { ProxyManager } from './proxy-manager';
 
@@ -57,7 +57,11 @@ export async function launchInstance(opts: LaunchOptions): Promise<LaunchHandle>
   }
 
   // 1. Build command
-  const built = await buildForgeCommand(opts);
+  // Read version ID from JSON (e.g. "1.20.1-forge-47.4.10") instead of using folder name
+  const verJsonPath = join(opts.runtimeRoot, 'versions', opts.version, `${opts.version}.json`);
+  const verJson = JSON.parse(require('node:fs').readFileSync(verJsonPath, 'utf-8'));
+  const versionIdFromJson = verJson.id || opts.version;
+  const built = await buildForgeCommand({ ...opts, version: versionIdFromJson });
 
   // 2. Ensure log dir
   const logDir = dirname(opts.logFilePath);
