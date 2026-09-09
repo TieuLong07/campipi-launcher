@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { checkRuntime, sha1, cleanNativesDir, rotateLogs } from '../src/main/repair.ts';
+import { checkRuntime, sha1, cleanNativesDir, rotateLogs } from '../main/repair.ts';
 
 const RUNTIME = 'D:/2026WORK/Campipi/.runtime/clean';
 const VERSION = '1.20.1-forge-47.4.10';

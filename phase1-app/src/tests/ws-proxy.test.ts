@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { WebSocketServer } from 'ws';
 import { createConnection } from 'node:net';
-import { WsProxy } from '../src/main/ws-proxy.ts';
+import { WsProxy } from '../main/ws-proxy.ts';
 
 const PROXY_TCP_PORT = 25566;
 

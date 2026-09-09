@@ -25,7 +25,7 @@ Module._load = function (req, parent, isMain) {
 
 let store;
 before(async () => {
-  store = await import('../src/main/account-store.ts');
+  store = await import('../main/account-store.ts');
 });
 after(() => {
   Module._load = origLoad;
@@ -116,7 +116,7 @@ test('removeAccount deletes + reassigns active', async () => {
 test('corrupt store is backed up and replaced with empty', async () => {
   const file = join(tmpHome, 'userData/accounts.json');
   writeFileSync(file, '{ not valid json');
-  const fresh = await import('../src/main/account-store.ts?v=' + Date.now());
+  const fresh = await import('../main/account-store.ts?v=' + Date.now());
   const list = await fresh.listAccounts();
   assert.equal(list.length, 0);
   const backups = readdirSync(join(tmpHome, 'userData')).filter((f) => f.includes('corrupt'));

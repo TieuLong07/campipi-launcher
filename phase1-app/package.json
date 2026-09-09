@@ -11,7 +11,7 @@
     "build:electron": "tsc -p tsconfig.electron.json",
     "build:all": "npm run build:electron && npm run build:renderer",
     "typecheck": "tsc --noEmit -p tsconfig.electron.json && tsc --noEmit -p tsconfig.json",
-    "test": "tsx --test --test-reporter=spec tests/*.test.mjs tests/*.test.ts",
+    "test": "tsx --test --test-reporter=spec src/tests/*.test.mjs src/tests/*.test.ts",
     "package": "npm run build:all && electron-builder --win --x64",
     "package:dir": "npm run build:all && electron-builder --dir --win --x64"
   },

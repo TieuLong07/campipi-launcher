@@ -3,7 +3,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ProxyManager } from '../src/main/proxy-manager.ts';
+import { ProxyManager } from '../main/proxy-manager.ts';
 
 test('ProxyManager starts and stops', async () => {
   const pm = new ProxyManager();

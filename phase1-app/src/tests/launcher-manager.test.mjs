@@ -4,7 +4,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { launchInstance, listActive } from '../src/main/launcher-manager.ts';
+import { launchInstance, listActive } from '../main/launcher-manager.ts';
 import { existsSync, readFileSync, statSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';

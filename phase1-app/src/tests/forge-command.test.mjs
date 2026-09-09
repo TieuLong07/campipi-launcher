@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, statSync, readdirSync } from 'node:fs';
-import { buildForgeCommand, detectJava17, cleanNatives } from '../src/main/forge-command.ts';
+import { buildForgeCommand, detectJava17, cleanNatives } from '../main/forge-command.ts';
 
 const RUNTIME = 'D:/2026WORK/Campipi/.runtime/clean';
 const VERSION = '1.20.1-forge-47.4.10';
