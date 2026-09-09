@@ -1,10 +1,10 @@
 {
   "name": "mcpubg-launcher",
-  "version": "0.1.0-alpha",
-  "description": "MCPubg Launcher — minimal, dark-themed, Forge 1.20.1 modpack launcher",
+  "version": "0.2.0",
+  "description": "MCPubg Launcher — minimal, dark-themed, Forge 1.20.1 modpack launcher. TLauncher-style shared .minecraft at %APPDATA%/.minecraft, per-instance folders at versions/<name>/.",
   "main": "dist/main/main.js",
   "author": "TieuLong07 <nguyenhlong2203@gmail.com>",
-  "license": "MIT",
+  "license": "BSL-1.1",
   "scripts": {
     "dev:renderer": "vite",
     "build:renderer": "vite build",
@@ -13,8 +13,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.electron.json && tsc --noEmit -p tsconfig.json",
     "test": "tsx --test --test-reporter=spec tests/*.test.mjs tests/*.test.ts",
     "package": "npm run build:all && electron-builder --win --x64",
-    "package:dir": "npm run build:all && electron-builder --dir --win --x64",
-    "prebuild:win": "python C:/Users/ADMIN/AppData/Local/Temp/pre-build-wincodesign.py"
+    "package:dir": "npm run build:all && electron-builder --dir --win --x64"
   },
   "engines": {
     "node": ">=22",
@@ -34,10 +33,14 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
-    "@xmcl/core": "^2.15.1",
+    "@xmcl/core": "2.15.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "ws": "^8.21.3"
+  },
+  "overrides": {
+    "@xmcl/unzip": "2.1.2",
+    "undici": "^7.0.0"
   },
   "build": {
     "appId": "com.tieulong.mcpubg.launcher",

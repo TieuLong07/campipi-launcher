@@ -1,0 +1,42 @@
+# Dependencies
+**/node_modules/
+**/package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+**/dist/
+**/release/
+**/asar-extract/
+**/*.tsbuildinfo
+**/out/
+
+# Logs / runtime
+**/*.log
+**/_logs/
+**/.runtime/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Test artifacts (regenerated on demand)
+**/test-*.ts
+**/v.js
+**/check-asar*.js
+**/verify-exe.js
+**/extract-wincodesign*.py
+
+# Windows binaries (built artifact, not source)
+*.exe
+*.dll
+*.pdb
+
+# Forge installer logs (output, not source)
+**/forge-*.jar.log
+**/libraries/
