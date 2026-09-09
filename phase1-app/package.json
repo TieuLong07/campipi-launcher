@@ -1,0 +1,75 @@
+{
+  "name": "mcpubg-launcher",
+  "version": "0.1.0-alpha",
+  "description": "MCPubg Launcher — minimal, dark-themed, Forge 1.20.1 modpack launcher",
+  "main": "dist/main/main.js",
+  "author": "TieuLong07 <nguyenhlong2203@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev:renderer": "vite",
+    "build:renderer": "vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:all": "npm run build:electron && npm run build:renderer",
+    "typecheck": "tsc --noEmit -p tsconfig.electron.json && tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test --test-reporter=spec tests/*.test.mjs tests/*.test.ts",
+    "package": "npm run build:all && electron-builder --win --x64",
+    "package:dir": "npm run build:all && electron-builder --dir --win --x64",
+    "prebuild:win": "python C:/Users/ADMIN/AppData/Local/Temp/pre-build-wincodesign.py"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
+    "playwright": "^1.63.0",
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "@xmcl/core": "^2.15.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ws": "^8.21.3"
+  },
+  "build": {
+    "appId": "com.tieulong.mcpubg.launcher",
+    "productName": "MCPubg Launcher",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "node_modules/ws/**/*",
+      "node_modules/@xmcl/**/*",
+      "node_modules/playwright/**/*"
+    ],
+    "asarUnpack": [
+      "node_modules/ws/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
+    }
+  }
+}

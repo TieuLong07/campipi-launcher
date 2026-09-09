@@ -1,0 +1,51 @@
+{
+  "instances": [
+    {
+      "id": "1.20.1",
+      "name": "1.20.1",
+      "version": "1.20.1",
+      "status": "empty",
+      "statusText": "Chưa cài đặt",
+      "details": [
+        "• 49 mods",
+        "• Cấu hình chưa rõ"
+      ],
+      "actions": [
+        {
+          "id": "select",
+          "label": "Kích hoạt"
+        }
+      ]
+    },
+    {
+      "id": "1.20.1-forge-47.4.10",
+      "name": "1.20.1 Forge 47.4.10",
+      "version": "1.20.1-forge-47.4.10",
+      "badge": {
+        "label": "ĐANG CHỌN",
+        "kind": "active"
+      },
+      "status": "ready",
+      "statusText": "Sẵn sàng vào game",
+      "details": [
+        "• 49 mods",
+        "• Cấu hình chưa rõ"
+      ],
+      "actions": [
+        {
+          "id": "verify",
+          "label": "Sửa lỗi"
+        }
+      ]
+    }
+  ],
+  "selectedInstanceId": "1.20.1-forge-47.4.10",
+  "java": {
+    "path": "C:/Program Files/Microsoft/jdk-17.0.20.101-hotspot/bin/javaw.exe",
+    "version": "17.0.20",
+    "ok": true
+  },
+  "launcherVersion": "0.0.2-alpha",
+  "hasUpdate": true,
+  "ramMaxMb": 4096
+}

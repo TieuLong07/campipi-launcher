@@ -1,0 +1,272 @@
+{
+  "root": "D:\\2026WORK\\MCPubgLauncherV2\\.runtime\\clean",
+  "java": "C:/Program Files/Microsoft/jdk-17.0.20.101-hotspot/bin/java.exe",
+  "version": "1.20.1-forge-47.4.10",
+  "installMethod": "forge-installer-direct",
+  "method": "forge-installer-direct + 49 mods from mods.zip",
+  "mods": {
+    "count": 49,
+    "source": "D:/2026WORK/MCPubg/mods.zip"
+  },
+  "modpack": {
+    "source": "C:/Users/ADMIN/AppData/Roaming/.minecraft/versions/cam/mods",
+    "extracted_to": "D:/2026WORK/MCPubgLauncherV2/.runtime/clean/mods",
+    "count": 49,
+    "bytes": 207297315,
+    "mcpubg_version": "b95dd381f281 (180,979 B - cam instance build)",
+    "all_sha256": [
+      {
+        "name": "[TAGZ] Supressing-1.0.jar",
+        "size": 16101,
+        "sha256": "e9e8a6e783c4952b935b3c39a4e33992e8804f572401811b814976e660733193"
+      },
+      {
+        "name": "accuratehitboxes-neoforge-2.4.1-1.20.1.jar",
+        "size": 76210,
+        "sha256": "f3ba4bec3957e394e890543f917073e13a7a0bc6a0b60e19bd22086f8c408142"
+      },
+      {
+        "name": "AI-Improvements-1.20-0.5.2.jar",
+        "size": 29553,
+        "sha256": "575a4a8e00f982c064d54bb3e73e5cda2d14414de054a471a3daf3f58bdf560a"
+      },
+      {
+        "name": "architectury-9.2.14-forge.jar",
+        "size": 580602,
+        "sha256": "218b471d0b8a1f6cda14cfc1beb9eeb0df54304500acc6c5613d9b88ec65d9af"
+      },
+      {
+        "name": "Arena Breakout Infinite Melee Pack-0.1.0.jar",
+        "size": 6027969,
+        "sha256": "f41122e68eab195db5b7d8e33bb5b71e86c8df456ff4dffb1325f28495bb23d2"
+      },
+      {
+        "name": "Atlas Lib-1.20.1-1.1.12.jar",
+        "size": 124436,
+        "sha256": "8cc9b5b46e65affed0c38aa54da6870ec4e820364c654c4dd2bb70a94ba39c50"
+      },
+      {
+        "name": "BadMobs-1.20.1-19.0.4.jar",
+        "size": 10425,
+        "sha256": "b36e64f510404c0984d7d5358e6e99937516d0eeab3ec534eaa638c8b29dfd85"
+      },
+      {
+        "name": "berezka_api-1.2.9.5-forge-1.20.1.jar",
+        "size": 159104,
+        "sha256": "73d4d3e312e7614ceefffbc552f79317645a347d96896f9a54534eda323f2005"
+      },
+      {
+        "name": "chaoszproject-bandits-1.0.0-1.20.1.jar",
+        "size": 19791,
+        "sha256": "97c9f0d4ee3f5114353af3b23ffa08550682e684f11e853c93930c03881824e8"
+      },
+      {
+        "name": "citadel-2.6.3-1.20.1.jar",
+        "size": 3185275,
+        "sha256": "56c7ab87348a5292583aac787b6cf11b5193e77f02af1d17ea75a96f8640b3ce"
+      },
+      {
+        "name": "cloth-config-11.1.136-forge.jar",
+        "size": 1181413,
+        "sha256": "1e895e85cf5b1e1905ef3178ec155c8badfe22a1577b92c09143a5aa1f4ce0f2"
+      },
+      {
+        "name": "coroutil-forge-1.20.1-1.3.7.jar",
+        "size": 64187,
+        "sha256": "11448808a42c17425cf2ea39701841008683d6ad6e2838a34eef0253251a870f"
+      },
+      {
+        "name": "curios-forge-5.14.1+1.20.1.jar",
+        "size": 398066,
+        "sha256": "1e817919a35b37cf30524aaec73f0ca5130452f23f168f844854df282eb8e51f"
+      },
+      {
+        "name": "dyairdrop-1.1.0-1.20.1-beta.jar",
+        "size": 1403489,
+        "sha256": "c77781e94626a19d5844cc4c6e2054b5404c80be077177cd5ffaacf011c2ab39"
+      },
+      {
+        "name": "endlessammo-2.0.jar",
+        "size": 113576,
+        "sha256": "30527d016f12d1862aeaf21d303d2f017138127cd722163c07d7e348e3223002"
+      },
+      {
+        "name": "FarmersDelight-1.20.1-1.3.2.jar",
+        "size": 3313327,
+        "sha256": "47aed94bb9192c4978fe199f9d3ca5895aeccfbe5b5a0869fdf3aa011c2641f7"
+      },
+      {
+        "name": "framework-forge-1.20.1-0.8.0.jar",
+        "size": 383868,
+        "sha256": "37c267f46d8b8dfa81bae8c9fa9fa6467e456cadecae10722ee91b43437f25a0"
+      },
+      {
+        "name": "geckolib-forge-1.20.1-4.8.4.jar",
+        "size": 1038209,
+        "sha256": "c04abba4fd354dd8c0e8a732f1f05f4dca893d2e1d962b2ab128bbd411478747"
+      },
+      {
+        "name": "immersive_ballistic-1.3.jar",
+        "size": 6939506,
+        "sha256": "b1d037714bb106e02476b97976e5d8245b321b5541a97cc4c06f2d24b542539e"
+      },
+      {
+        "name": "immersive_weathering-1.20.1-2.0.5-forge.jar",
+        "size": 2269048,
+        "sha256": "b88353d6efe18635bac2d4169e704320987e9678fd683217195dcdcf2c1ca1ba"
+      },
+      {
+        "name": "jmvworldborder-1.0.2.jar",
+        "size": 92845,
+        "sha256": "09111273789ed6f42a79d60db1e7b96e7f9d1a65bff35597303a21e9e34ba9fd"
+      },
+      {
+        "name": "journeymap-1.20.1-5.10.3-forge.jar",
+        "size": 7160406,
+        "sha256": "7640a8fdc24ea3988764f774ed1b84cae60f70a1b395bb693faa7aa91b38af62"
+      },
+      {
+        "name": "Keerdm_20Zombie_20Apocalypse_20Essentials_20(TACZ)_201.42.jar",
+        "size": 258713,
+        "sha256": "1b9db7636db3a1bcfb015d19c6d44b663e454f05e12e472d128c60f2b5214d3e"
+      },
+      {
+        "name": "kotlinforforge-4.12.0-all.jar",
+        "size": 7442998,
+        "sha256": "6a66c6a68ec09f8717cdbf06883394f0ee24d7cd826b7134a0f81839e8e720ae"
+      },
+      {
+        "name": "lootchestrefill-1.1.2.jar",
+        "size": 133603,
+        "sha256": "1d7ad04d7c3eff4aa649655c3d3d04cd25b88d282ec26b0074982ecc4dfd0593"
+      },
+      {
+        "name": "lostcities-1.20-7.5.1.jar",
+        "size": 1402156,
+        "sha256": "ae3ab32d4e62c220146cd330368bace256edc497d0664bea2657063f75cb8272"
+      },
+      {
+        "name": "lrtactical-1.20.1-0.4.1.jar",
+        "size": 5439652,
+        "sha256": "42f3b2f5a4194baa10ce76720b5770290a64105634f0dcd9182fc0ef33800e6e"
+      },
+      {
+        "name": "marbledsarsenal-1.20.1forge-2.4.0.0.jar",
+        "size": 389987,
+        "sha256": "e399a59a30d40651d1cab943c5f80dd79fb58d7d1ff7268ae1e314cae8a3b63b"
+      },
+      {
+        "name": "mcore-1.20.1-1.0.3.0.jar",
+        "size": 121205,
+        "sha256": "b9a5e6fa48b9d02806f6ee34899d84d27e09c7cded035f2834de2bed83fc4267"
+      },
+      {
+        "name": "mcpubg-0.0.1.jar",
+        "size": 180979,
+        "sha256": "b95dd381f2812925974e45107320211126086880d0f01cfb864ffdf9fc3fb02e"
+      },
+      {
+        "name": "moonlight-1.20-2.16.34-forge.jar",
+        "size": 1419416,
+        "sha256": "007c05ae799417ca7aa26669c5d97be9dface5b6fc27aca4ca8031cafe4ddd6e"
+      },
+      {
+        "name": "nomindlessshooting-2.2.0-1.20.1.jar",
+        "size": 17877,
+        "sha256": "633cd2706e835f3c4820ead0be4f64736d4125b0bf5102bb9468bf47b3872c61"
+      },
+      {
+        "name": "ParCool-1.20.1-3.4.3.3.jar",
+        "size": 1154052,
+        "sha256": "2ddef8752b5a1428035b95f29e62c81e33b80d37851681e1b928d8a01615c6e7"
+      },
+      {
+        "name": "ragdollified-1.20.1-0.8.0-BETA.jar",
+        "size": 1145855,
+        "sha256": "52c724d7dff4de0ae5e694cc0e90e7cfe7eca5193ba29651b64f98670b9b6204"
+      },
+      {
+        "name": "rbi-1.20.1-0.2.0.jar",
+        "size": 2261520,
+        "sha256": "8ee274f6ef6c019f03423de4128efe8b78b0a88c671ab8cca68cb37669756f7d"
+      },
+      {
+        "name": "sophisticatedbackpacks-1.20.1-3.24.63.2049.jar",
+        "size": 1153328,
+        "sha256": "f9a374f2c80dda0256ee49e9024ac4e131ac2a2110827141a866b9708da5f799"
+      },
+      {
+        "name": "sophisticatedcore-1.20.1-1.3.75.2231.jar",
+        "size": 1625194,
+        "sha256": "389f49262579097e0b3aa2d6a132ea322d41308b17a53e1a61dd762a75e1eac4"
+      },
+      {
+        "name": "superbwarfare-0.8.9-final-mc1.20.1-6effe4385-all.jar",
+        "size": 31691008,
+        "sha256": "6eece0df9c927bddee3bd373fe90a2bbcba7157e9408ee0f94d13e04dc638395"
+      },
+      {
+        "name": "survival_instinct-1.0.2-forge-1.20.1.jar",
+        "size": 2136620,
+        "sha256": "9f73d8ec5fcf6bb6641f46c0484c63dbfc4ed883c73f7dbbad38de8fcc753e62"
+      },
+      {
+        "name": "tacticalvests-1.0.4-forge-1.20.1.jar",
+        "size": 6358297,
+        "sha256": "aca12178541928733da28fb2f63d9bc5d7a5bf7772890de14abd7475397417b0"
+      },
+      {
+        "name": "tacz-1.20.1-1.1.8-hotfix.jar",
+        "size": 57465167,
+        "sha256": "9ed8ada1283ed7a793a70cc1b51c4a340f367ce84707e1a7b8cf21ee3d288d77"
+      },
+      {
+        "name": "tacz-mesh-loader-forge-1.20.1-0.1.6.jar",
+        "size": 177296,
+        "sha256": "19ed643df99b2123e214b9cb9f0bd0f5ff29f83b307a5b72dcbafa9917a43edd"
+      },
+      {
+        "name": "tacz-tweaks-2.14.2-all.jar",
+        "size": 1930028,
+        "sha256": "e0a9aeea1b764910fa4201391089759e338002c89a19a98b296f1c9f27fd836f"
+      },
+      {
+        "name": "tacz_realisticblood-1.0.8-forge-1.20.1.jar",
+        "size": 46562565,
+        "sha256": "8ca04d669875b79f812f032b25827ad12526c858d9fed8ac3cdc32abd9e632b3"
+      },
+      {
+        "name": "taczadditions-1.20.1-1.1.1.jar",
+        "size": 117741,
+        "sha256": "9ea959b6da5543f23a72691f65c32f3f3cf1fb8d0f019118f274961971ff4caf"
+      },
+      {
+        "name": "TerraBlender-forge-1.20.1-3.0.1.10.jar",
+        "size": 107532,
+        "sha256": "c109016f46ca9bdae69976bf080bbf2e8e5968cb66c0a78845f8ca6af5dbbeb1"
+      },
+      {
+        "name": "The-Hordes-1.20.1-1.6.3g-all.jar",
+        "size": 620090,
+        "sha256": "27ef9779933aad25a64601909615d679461ed074f46a7e9730b9f8e53a2757af"
+      },
+      {
+        "name": "yet_another_config_lib_v3-3.6.6+1.20.1-forge.jar",
+        "size": 1105891,
+        "sha256": "bd05da3d9df29b914165583f1c6dfd918a138996447ff32c0418329824027a8f"
+      },
+      {
+        "name": "zombieawareness-1.20.1-1.13.1.jar",
+        "size": 291139,
+        "sha256": "4f5104f7d29e1d065364d2483885f3751da2bef09a734cead2fce81c82c46586"
+      }
+    ]
+  },
+  "packs": {
+    "cam": {
+      "path": "C:/Users/ADMIN/AppData/Roaming/.minecraft/versions/cam",
+      "versionId": "cam",
+      "mainClass": "cpw.mods.bootstraplauncher.BootstrapLauncher"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-07T17:34:36.824Z",
+  "rendererUrl": "http://127.0.0.1:54956/index.html",
+  "consoleErrors": [],
+  "networkErrors": [],
+  "issues": [],
+  "screenshots": [
+    "01-home.png",
+    "02-library.png",
+    "03-settings.png",
+    "04-log-modal.png",
+    "05-toast.png",
+    "06-user-popover.png",
+    "07-account-modal.png"
+  ],
+  "pass": true
+}

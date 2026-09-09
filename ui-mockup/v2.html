@@ -1,0 +1,1643 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>MCPubg Launcher — Minimal Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0b0a;
+      --panel: #141311;
+      --panel-elevated: #1c1a17;
+      --border: #292521;
+      --border-focus: #4a423b;
+      
+      --text-main: #f5efe6;
+      --text-body: #d1c8bd;
+      --text-muted: #7d756b;
+      
+      --brand: #e0532c;
+      --brand-hover: #f0643d;
+      --brand-glow: rgba(224, 83, 44, 0.28);
+      --amber: #e59840;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --sidebar-width: 230px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.5;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      user-select: none;
+    }
+
+    /* Window / Shell Layout */
+    .app-shell {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg);
+    }
+
+    /* ================= SIDEBAR ================= */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 14px 16px;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 6px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--brand) 0%, #ba3a17 100%);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 12px var(--brand-glow);
+    }
+    .brand-meta h2 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .brand-meta span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Navigation */
+    .nav-group {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      color: var(--text-body);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+    .nav-item:hover {
+      background: var(--panel-elevated);
+      color: var(--text-main);
+    }
+    .nav-item.active {
+      background: #24201c;
+      color: #fff;
+      box-shadow: inset 0 0 0 1px var(--border-focus);
+    }
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      opacity: 0.85;
+    }
+    .nav-item.active svg {
+      color: var(--brand);
+      opacity: 1;
+    }
+
+    /* Update Dot on Sidebar */
+    .nav-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--brand);
+      margin-left: auto;
+      box-shadow: 0 0 6px var(--brand);
+    }
+
+    /* Instance Status Dots */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot.ready { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .status-dot.need-download { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .status-dot.updating { background: var(--blue); box-shadow: 0 0 6px var(--blue); animation: spinPulse 1.2s infinite ease-in-out; }
+    @keyframes spinPulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Update Alert Chip in Home / Library */
+    .update-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(224, 83, 44, 0.12);
+      border: 1px solid rgba(224, 83, 44, 0.35);
+      border-radius: 10px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+    .update-chip-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+    .update-chip-action {
+      background: var(--brand);
+      border: none;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .update-chip-action:hover {
+      background: var(--brand-hover);
+    }
+
+    /* Account Widget (Bottom Sidebar) */
+    .user-box {
+      margin-top: auto;
+      position: relative;
+    }
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 140ms ease;
+    }
+    .user-card:hover {
+      border-color: var(--border-focus);
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2e2823, #453c34);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--amber);
+      border: 1px solid var(--border);
+    }
+    .user-details {
+      flex: 1;
+      overflow: hidden;
+    }
+    .user-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-type {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Account Popover */
+    .user-popover {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      width: 250px;
+      background: var(--panel);
+      border: 1px solid var(--border-focus);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+    .user-popover.open { display: flex; }
+    .popover-heading {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 2px 6px;
+    }
+    .account-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .account-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .account-item:hover { background: var(--panel-elevated); }
+    .account-item.active {
+      background: rgba(224, 83, 44, 0.12);
+      border: 1px solid rgba(224, 83, 44, 0.3);
+    }
+    .account-avatar-mini {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: #2b2520;
+      color: var(--amber);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 10px;
+    }
+    .account-item-meta { flex: 1; overflow: hidden; }
+    .account-item-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .account-item-type { font-size: 9.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .btn-remove-acc {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      display: none;
+    }
+    .account-item:hover .btn-remove-acc { display: block; }
+    .btn-remove-acc:hover { color: var(--red); }
+    .popover-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
+    }
+    .popover-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 6px;
+      color: var(--text-body);
+      background: transparent;
+      border: none;
+      font-size: 11.5px;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+    }
+    .popover-btn:hover {
+      background: var(--panel-elevated);
+      color: var(--text-main);
+    }
+    .popover-btn.danger:hover {
+      color: var(--red);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Screen Container */
+    .screen {
+      display: none;
+      flex: 1;
+      padding: 30px 40px;
+      overflow-y: auto;
+      position: relative;
+      z-index: 10;
+    }
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ================= SCREEN: PLAY / HOME ================= */
+    #screen-home {
+      padding: 24px 36px 28px;
+      justify-content: space-between;
+    }
+
+    /* Interactive Canvas Background in Hero */
+    .hero-container {
+      position: relative;
+      flex: 1;
+      min-height: 380px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 34px 38px;
+      background: #0f0e0c;
+    }
+
+    canvas#ambient-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.75;
+    }
+
+    .hero-top, .hero-bottom {
+      position: relative;
+      z-index: 2;
+    }
+
+    .server-status-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px;
+      background: rgba(18, 16, 14, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+    }
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+    .server-ip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .server-players {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      border-left: 1px solid var(--border);
+      padding-left: 10px;
+    }
+
+    .hero-headline {
+      max-width: 620px;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: var(--brand);
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      background: linear-gradient(180deg, #ffffff 30%, #c4bcb2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 14px;
+      color: var(--text-body);
+      max-width: 500px;
+      line-height: 1.55;
+    }
+
+    /* Dock: Launch & Instance Control */
+    .play-dock {
+      margin-top: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .instance-picker {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .instance-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--amber);
+    }
+    .instance-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .instance-select {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 15px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .instance-select option {
+      background: var(--panel);
+      color: var(--text-main);
+    }
+    .instance-subinfo {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      gap: 8px;
+    }
+
+    .dock-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-icon-folder {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-body);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+    .btn-icon-folder:hover {
+      background: #25221d;
+      color: var(--text-main);
+    }
+
+    /* Big Play Button */
+    .btn-launch {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--brand) 0%, #c4401a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 40px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 18px var(--brand-glow);
+      transition: all 160ms cubic-bezier(0.2, 0.8, 0.4, 1);
+    }
+    .btn-launch:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(224, 83, 44, 0.4);
+    }
+    .btn-launch:active {
+      transform: translateY(1px);
+    }
+    .btn-launch svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Launching Progress Bar Overlay */
+    .launch-progress {
+      display: none;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: #fff;
+      width: 0%;
+      transition: width 100ms linear;
+    }
+
+    /* ================= SCREEN: LIBRARY ================= */
+    .page-header {
+      margin-bottom: 22px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .page-desc {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .instance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .instance-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 140ms ease;
+    }
+    .instance-card:hover {
+      border-color: var(--border-focus);
+    }
+    .instance-card.active-pack {
+      border-color: var(--brand);
+      background: linear-gradient(180deg, #191613 0%, #141311 100%);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .badge {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--panel-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .badge.active {
+      background: rgba(224, 83, 44, 0.15);
+      color: var(--brand);
+      border-color: rgba(224, 83, 44, 0.3);
+    }
+    .card-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-small {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--panel-elevated);
+      color: var(--text-body);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: inherit;
+    }
+    .btn-small:hover {
+      background: #23201c;
+      color: var(--text-main);
+    }
+
+    /* Empty Add Instance Card */
+    .instance-card.add-card {
+      border: 1.5px dashed var(--border-focus);
+      background: rgba(20, 19, 17, 0.35);
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 160ms ease;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .instance-card.add-card:hover {
+      border-color: var(--brand);
+      background: rgba(224, 83, 44, 0.05);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+    .add-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--brand);
+      transition: all 160ms ease;
+    }
+    .instance-card.add-card:hover .add-icon-circle {
+      transform: scale(1.08);
+      border-color: var(--brand);
+      background: rgba(224, 83, 44, 0.15);
+    }
+    .add-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-body);
+    }
+    .add-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Modal Overlay & Dialog */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(5px);
+      display: none;
+      place-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: grid;
+    }
+    .modal-box {
+      background: var(--panel);
+      border: 1px solid var(--border-focus);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      animation: modalPop 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .modal-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .btn-close-modal:hover {
+      color: var(--text-main);
+      background: var(--panel-elevated);
+    }
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+    .form-control {
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 140ms ease;
+    }
+    .form-control:focus {
+      border-color: var(--brand);
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    /* ================= SCREEN: SETTINGS ================= */
+    .settings-group {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .setting-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .setting-text h4 {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .setting-text p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .range-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--amber);
+      min-width: 50px;
+      text-align: right;
+    }
+    input[type="range"] {
+      accent-color: var(--brand);
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+      transform: translateY(-50px);
+      opacity: 0;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-color: var(--green); }
+    .toast.success svg { color: var(--green); }
+    .toast.error { border-color: var(--red); }
+    .toast.error svg { color: var(--red); }
+    .toast.warning { border-color: var(--amber); }
+    .toast.warning svg { color: var(--amber); }
+    .toast.info { border-color: var(--blue); }
+    .toast.info svg { color: var(--blue); }
+
+    /* Log Viewer Window Modal */
+    .terminal-box {
+      background: #090908;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      height: 280px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #b5ad9e;
+      user-select: text;
+    }
+    .log-line { line-height: 1.45; word-break: break-all; }
+    .log-info { color: #60a5fa; }
+    .log-warn { color: var(--amber); }
+    .log-error { color: var(--red); font-weight: 600; }
+    .log-time { color: var(--text-muted); margin-right: 6px; }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  
+  <!-- ================= SIDEBAR TỐI GIẢN (CHỈ 3 TAB) ================= -->
+  <aside>
+    <div class="brand">
+      <div class="brand-icon">M</div>
+      <div class="brand-meta">
+        <h2>MCPubg</h2>
+        <span>v0.0.2 • client</span>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-item active" data-target="screen-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Chơi ngay
+      </div>
+      <div class="nav-item" data-target="screen-library" id="navLibrary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Bản cài đặt
+        <span class="nav-badge-dot" id="updateBadgeDot" title="Có bản cập nhật mới"></span>
+      </div>
+      <div class="nav-item" data-target="screen-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Cài đặt
+      </div>
+    </div>
+
+    <!-- Quick Account Manager -->
+    <div class="user-box">
+      <div class="user-popover" id="userPopover">
+        <div class="popover-heading">Tài khoản đã lưu</div>
+        <div class="account-list" id="accountListContainer">
+          <!-- Render dynamically via JS -->
+        </div>
+
+        <div class="popover-divider"></div>
+
+        <button class="popover-btn" id="btnAddOfflineAcc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Thêm nick Offline mới
+        </button>
+        <button class="popover-btn" id="btnLoginMS">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+          Đăng nhập Microsoft
+        </button>
+        <button class="popover-btn danger" id="btnLogoutCurrent">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Đăng xuất tài khoản này
+        </button>
+      </div>
+
+      <div class="user-card" id="userCard">
+        <div class="user-avatar" id="avatarText">TL</div>
+        <div class="user-details">
+          <div class="user-name" id="currentUsername">TieuLong07</div>
+          <div class="user-type" id="currentUserType">Offline account</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN VIEW ================= -->
+  <main>
+    
+    <!-- TAB 1: CHƠI NGAY (HOME) -->
+    <div class="screen active" id="screen-home">
+      
+      <!-- Banner update thông báo nếu có modpack mới -->
+      <div class="update-chip" id="homeUpdateChip">
+        <div class="update-chip-text">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--brand);"></span>
+          <span><strong>Bản modpack v0.0.3</strong> đã sẵn sàng: Tối ưu súng TACZ và chống văng game.</span>
+        </div>
+        <button class="update-chip-action" id="btnUpdatePack">Cập nhật ngay</button>
+      </div>
+
+      <!-- HERO VỚI CANVAS AMBIENT BACKGROUND -->
+      <div class="hero-container">
+        <!-- Interactive Canvas Background -->
+        <canvas id="ambient-canvas"></canvas>
+
+        <div class="hero-top">
+          <div class="server-status-card">
+            <span class="live-dot"></span>
+            <span class="server-ip">mc.tiulong.site</span>
+            <span class="server-players">12 / 50 người chơi</span>
+          </div>
+        </div>
+
+        <div class="hero-bottom">
+          <div class="hero-headline">
+            <span class="hero-tag">Chiến dịch Mùa 1</span>
+            <h1 class="hero-title">MCPubg: Sinh Tồn Bo Thu</h1>
+            <p class="hero-desc">Súng TACZ tùy biến, nhảy dù loot đồ, phương tiện di chuyển mượt mà. Đã sẵn sàng kết nối.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCK ĐIỀU KHIỂN & NÚT VÀO GAME -->
+      <div class="play-dock">
+        <div class="instance-picker">
+          <div class="instance-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          </div>
+          <div class="instance-select-wrap">
+            <select class="instance-select" id="instanceSelect">
+              <option value="cam" data-status="ready" data-meta="Forge 1.20.1 • 49 Mods • Tối ưu TACZ">Bản Chuẩn: Cam (49 mods)</option>
+              <option value="cam-lite" data-status="need-download" data-meta="Forge 1.20.1 • 22 Mods • Cần tải thêm file">Bản Nhẹ: Cam Lite (22 mods)</option>
+              <option value="vanilla" data-status="ready" data-meta="Vanilla 1.20.1 • Không mods">Bản Gốc: 1.20.1 Vanilla</option>
+            </select>
+            <div class="instance-subinfo">
+              <span class="status-badge" id="currentInstanceStatus">
+                <span class="status-dot ready"></span> Sẵn sàng
+              </span>
+              <span>•</span>
+              <span id="instanceMeta">Forge 1.20.1 • 49 Mods • Tối ưu TACZ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dock-actions">
+          <button class="btn-icon-folder" title="Mở thư mục game (.minecraft)" id="btnOpenFolder">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </button>
+          
+          <button class="btn-launch" id="btnPlay">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span id="playText">VÀO GAME</span>
+            <div class="launch-progress" id="launchBar"></div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: QUẢN LÝ BẢN CÀI ĐẶT (LIBRARY) -->
+    <div class="screen" id="screen-library">
+      <div class="page-header">
+        <h2 class="page-title">Bản Cài Đặt (Instances)</h2>
+        <p class="page-desc">Chỉ giữ lại những bản bạn thường chơi, quan sát trạng thái sẵn sàng hoặc cập nhật của từng bản.</p>
+      </div>
+
+      <div class="instance-grid" id="instanceGrid">
+        <div class="instance-card active-pack" data-id="cam">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Cam (Mặc định)</div>
+              <div style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono';">1.20.1-forge-47.4.10</div>
+            </div>
+            <span class="badge active">ĐANG CHỌN</span>
+          </div>
+          <div class="card-details">
+            <div class="status-badge">
+              <span class="status-dot ready"></span> Sẵn sàng vào game
+            </div>
+            <div>• 49 Mods hoạt động (TACZ, GeckoLib, Citadel)</div>
+            <div>• Đã tích hợp gói Resource Pack PUBG</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-small" onclick="triggerUpdateInstance('cam')">Cập nhật v0.0.3</button>
+            <button class="btn-small" onclick="showToast('Đã kiểm tra tính toàn vẹn!', 'success')">Sửa lỗi</button>
+          </div>
+        </div>
+
+        <div class="instance-card" data-id="cam-lite">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Cam Lite</div>
+              <div style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono';">1.20.1-forge-47.4.10</div>
+            </div>
+            <span class="badge">TIẾT KIỆM RAM</span>
+          </div>
+          <div class="card-details">
+            <div class="status-badge">
+              <span class="status-dot need-download"></span> Cần tải tài nguyên (142 MB)
+            </div>
+            <div>• 22 Mods cốt lõi, tắt shader nặng</div>
+            <div>• Phù hợp card đồ họa tích hợp</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-small" onclick="selectInstance('cam-lite')">Kích hoạt</button>
+            <button class="btn-small" onclick="downloadInstanceAssets('cam-lite')">Tải tài nguyên</button>
+          </div>
+        </div>
+
+        <!-- Frame Dấu + Thêm Instance Mới -->
+        <div class="instance-card add-card" id="btnAddInstanceCard" title="Tạo hoặc cài đặt thêm một bản Minecraft mới">
+          <div class="add-icon-circle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <div>
+            <div class="add-title">Tạo Instance Mới</div>
+            <div class="add-desc">Forge, Fabric, Quilt hoặc Vanilla</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CÀI ĐẶT (SETTINGS) -->
+    <div class="screen" id="screen-settings">
+      <div class="page-header">
+        <h2 class="page-title">Cấu Hình Launcher</h2>
+        <p class="page-desc">Tinh chỉnh bộ nhớ RAM, xem log sự cố và quản lý file tạm.</p>
+      </div>
+
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-text">
+            <h4>Bộ nhớ RAM cấp phát (Max Memory)</h4>
+            <p>Khuyến nghị từ 4096 MB đến 6144 MB cho modpack này</p>
+          </div>
+          <div class="range-wrap">
+            <input type="range" min="2048" max="12288" step="512" value="4096" id="ramRange">
+            <span class="range-val" id="ramText">4096 MB</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <h4>Phiên bản Java</h4>
+            <p>Tự động nhận diện JDK 17</p>
+          </div>
+          <span style="font-family:'JetBrains Mono'; font-size:12px; color:var(--green);">Java 17.0.20 (x64) OK</span>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <h4>Nhật ký khởi động & Crash Log</h4>
+            <p>Xem log trực tiếp khi game bị văng hoặc gặp lỗi mod</p>
+          </div>
+          <button class="btn-small" style="flex:unset; padding:6px 14px; background:var(--panel-elevated); border-color:var(--border-focus);" id="btnOpenLogViewer">Xem log</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <h4>Tự động dọn Cache</h4>
+            <p>Giải phóng file rác tải về sau khi cập nhật modpack</p>
+          </div>
+          <button class="btn-small" style="flex:unset; padding:6px 14px;" onclick="showToast('Đã dọn dẹp sạch cache tải về!', 'success')">Dọn dẹp</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast Feedback (Support Success, Error, Warning, Info) -->
+<div class="toast success" id="toast">
+  <div id="toastIcon">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <span id="toastMsg">Thao tác thành công</span>
+</div>
+
+<!-- Modal Log Viewer -->
+<div class="modal-overlay" id="logModal">
+  <div class="modal-box" style="max-width: 640px;">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--brand);"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <h3>Nhật ký khởi động (Launcher Logs)</h3>
+      </div>
+      <button class="btn-close-modal" id="btnCloseLogModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="terminal-box" id="terminalLogBox">
+      <div class="log-line"><span class="log-time">[17:30:02]</span> <span class="log-info">[INFO]</span> MCPubg Launcher v0.0.2 ready.</div>
+      <div class="log-line"><span class="log-time">[17:30:03]</span> <span class="log-info">[INFO]</span> Java runtime verified: JDK 17.0.20 (x64)</div>
+      <div class="log-line"><span class="log-time">[17:30:03]</span> <span class="log-info">[INFO]</span> Checking instance profile "cam" (Forge 1.20.1-47.4.10)...</div>
+      <div class="log-line"><span class="log-time">[17:30:04]</span> <span class="log-warn">[WARN]</span> Found 1 optional update: Pack v0.0.3 (fixes TACZ recoil desync).</div>
+      <div class="log-line"><span class="log-time">[17:30:05]</span> <span class="log-info">[INFO]</span> Server ping mc.tiulong.site -> 38ms (12/50 players).</div>
+    </div>
+
+    <div class="modal-footer" style="justify-content: space-between; align-items: center; margin-top: 16px;">
+      <span style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono';">49 mods loaded • No fatal crash</span>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-small" id="btnClearLog">Xóa log</button>
+        <button type="button" class="btn-small" style="background:var(--panel-elevated); color:var(--text-main);" id="btnCopyLog">Sao chép log</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tạo Instance Mới -->
+<div class="modal-overlay" id="addInstanceModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Tạo bản cài đặt mới</h3>
+      <button class="btn-close-modal" id="btnCloseModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <form id="createInstanceForm">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="newInstanceName">Tên bản cài đặt</label>
+          <input type="text" id="newInstanceName" class="form-control" placeholder="VD: Sinh Tồn Hardcore, TACZ Test..." required />
+        </div>
+
+        <div class="form-group">
+          <label for="newInstanceVersion">Phiên bản Minecraft</label>
+          <select id="newInstanceVersion" class="form-control">
+            <option value="1.20.1">Minecraft 1.20.1 (Khuyến nghị cho MCPubg)</option>
+            <option value="1.20.4">Minecraft 1.20.4</option>
+            <option value="1.21.1">Minecraft 1.21.1 (Mới nhất)</option>
+            <option value="1.19.2">Minecraft 1.19.2</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="newInstanceLoader">Modloader</label>
+          <select id="newInstanceLoader" class="form-control">
+            <option value="Forge">Forge</option>
+            <option value="Fabric">Fabric</option>
+            <option value="NeoForge">NeoForge</option>
+            <option value="Vanilla">Vanilla (Không mod)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-small" style="flex:unset; padding:9px 16px;" id="btnCancelModal">Hủy</button>
+        <button type="submit" class="btn-small" style="flex:unset; padding:9px 18px; background:var(--brand); color:#fff; border-color:transparent;">Tạo ngay</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* ================= NAVIGATION TABS ================= */
+  const navItems = document.querySelectorAll('.nav-item');
+  const screens = document.querySelectorAll('.screen');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      screens.forEach(s => s.classList.remove('active'));
+      item.classList.add('active');
+      document.getElementById(item.dataset.target).classList.add('active');
+    });
+  });
+
+  /* ================= MULTI-ACCOUNT MANAGEMENT ================= */
+  let accounts = [
+    { id: 'acc_1', name: 'TieuLong07', type: 'Offline account', active: true },
+    { id: 'acc_2', name: 'Steve_Sniper', type: 'Offline account', active: false },
+    { id: 'acc_3', name: 'LongPro99@live.com', type: 'Microsoft account', active: false }
+  ];
+
+  const currentUsername = document.getElementById('currentUsername');
+  const currentUserType = document.getElementById('currentUserType');
+  const avatarText = document.getElementById('avatarText');
+  const accountListContainer = document.getElementById('accountListContainer');
+
+  function renderAccountList() {
+    accountListContainer.innerHTML = '';
+    accounts.forEach(acc => {
+      const item = document.createElement('div');
+      item.className = `account-item ${acc.active ? 'active' : ''}`;
+      const initials = acc.name.slice(0, 2).toUpperCase();
+      item.innerHTML = `
+        <div class="account-avatar-mini">${initials}</div>
+        <div class="account-item-meta">
+          <div class="account-item-name">${acc.name}</div>
+          <div class="account-item-type">${acc.type}</div>
+        </div>
+        ${acc.active ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--brand);"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        <button class="btn-remove-acc" title="Xóa tài khoản này" onclick="deleteAccount(event, '${acc.id}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      `;
+
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-remove-acc')) return;
+        switchAccount(acc.id);
+      });
+
+      accountListContainer.appendChild(item);
+    });
+
+    const activeAcc = accounts.find(a => a.active);
+    if (activeAcc) {
+      currentUsername.textContent = activeAcc.name;
+      currentUserType.textContent = activeAcc.type;
+      avatarText.textContent = activeAcc.name.slice(0, 2).toUpperCase();
+    }
+  }
+
+  function switchAccount(id) {
+    accounts.forEach(a => a.active = (a.id === id));
+    renderAccountList();
+    userPopover.classList.remove('open');
+    const curr = accounts.find(a => a.id === id);
+    showToast(`Đã chuyển sang tài khoản: ${curr.name}`, 'success');
+  }
+
+  function deleteAccount(e, id) {
+    e.stopPropagation();
+    if (accounts.length <= 1) {
+      showToast('Cần giữ lại ít nhất một tài khoản!', 'warning');
+      return;
+    }
+    const idx = accounts.findIndex(a => a.id === id);
+    const wasActive = accounts[idx].active;
+    accounts.splice(idx, 1);
+    if (wasActive && accounts.length > 0) {
+      accounts[0].active = true;
+    }
+    renderAccountList();
+    showToast('Đã xóa tài khoản', 'info');
+  }
+
+  document.getElementById('btnAddOfflineAcc').addEventListener('click', () => {
+    userPopover.classList.remove('open');
+    const newName = prompt('Nhập tên nick Minecraft offline:');
+    if (newName && newName.trim()) {
+      const trimmed = newName.trim();
+      const newAcc = {
+        id: 'acc_' + Date.now(),
+        name: trimmed,
+        type: 'Offline account',
+        active: true
+      };
+      accounts.forEach(a => a.active = false);
+      accounts.push(newAcc);
+      renderAccountList();
+      showToast(`Đã thêm và kích hoạt: ${trimmed}`, 'success');
+    }
+  });
+
+  document.getElementById('btnLoginMS').addEventListener('click', () => {
+    userPopover.classList.remove('open');
+    showToast('Đang mở trình duyệt xác thực Microsoft OAuth...', 'info');
+  });
+
+  document.getElementById('btnLogoutCurrent').addEventListener('click', () => {
+    userPopover.classList.remove('open');
+    showToast('Đã đăng xuất tài khoản hiện tại', 'warning');
+  });
+
+  renderAccountList();
+
+  /* ================= INSTANCE SELECTOR & STATUS ================= */
+  const instanceSelect = document.getElementById('instanceSelect');
+  const instanceMeta = document.getElementById('instanceMeta');
+  const currentInstanceStatus = document.getElementById('currentInstanceStatus');
+
+  const statusMap = {
+    'ready': { label: 'Sẵn sàng', dotClass: 'ready' },
+    'need-download': { label: 'Cần tải tài nguyên', dotClass: 'need-download' },
+    'updating': { label: 'Đang cập nhật...', dotClass: 'updating' }
+  };
+
+  function updateInstanceMeta() {
+    const opt = instanceSelect.options[instanceSelect.selectedIndex];
+    instanceMeta.textContent = opt.dataset.meta || '';
+    const st = opt.dataset.status || 'ready';
+    const cfg = statusMap[st] || statusMap['ready'];
+    currentInstanceStatus.innerHTML = `<span class="status-dot ${cfg.dotClass}"></span> ${cfg.label}`;
+  }
+  instanceSelect.addEventListener('change', updateInstanceMeta);
+
+  function selectInstance(val) {
+    instanceSelect.value = val;
+    updateInstanceMeta();
+    
+    document.querySelectorAll('#instanceGrid .instance-card:not(.add-card)').forEach(card => {
+      const isMatch = card.dataset.id === val;
+      card.classList.toggle('active-pack', isMatch);
+      const badge = card.querySelector('.badge');
+      if (badge) {
+        if (isMatch) {
+          badge.textContent = 'ĐANG CHỌN';
+          badge.className = 'badge active';
+        } else {
+          badge.textContent = 'ĐÃ CÀI';
+          badge.className = 'badge';
+        }
+      }
+    });
+
+    showToast(`Đã chọn bản: ${instanceSelect.options[instanceSelect.selectedIndex].text}`, 'info');
+  }
+
+  function downloadInstanceAssets(id) {
+    showToast('Đang tải gói tài nguyên bổ sung (142 MB)...', 'info');
+    appendLog(`Bắt đầu tải assets cho instance [${id}]...`);
+    setTimeout(() => {
+      const opt = instanceSelect.querySelector(`option[value="${id}"]`);
+      if (opt) opt.dataset.status = 'ready';
+      updateInstanceMeta();
+      showToast('Tải tài nguyên hoàn tất!', 'success');
+      appendLog(`Tải xong và hash SHA-256 thành công cho instance [${id}].`);
+    }, 1800);
+  }
+
+  function triggerUpdateInstance(id) {
+    showToast('Đang cập nhật gói MCPubg v0.0.3...', 'info');
+    appendLog(`Đang pull git release v0.0.3 cho instance [${id}]...`);
+    setTimeout(() => {
+      document.getElementById('updateBadgeDot').style.display = 'none';
+      document.getElementById('homeUpdateChip').style.display = 'none';
+      showToast('Đã nâng cấp lên MCPubg v0.0.3 thành công!', 'success');
+      appendLog('Nâng cấp modpack thành công. Đã cập nhật tacz-1.20.1-1.1.9.jar.');
+    }, 2000);
+  }
+
+  document.getElementById('btnUpdatePack').addEventListener('click', () => {
+    triggerUpdateInstance('cam');
+  });
+
+  /* ================= ENHANCED TOAST HELPER ================= */
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    const toastIcon = document.getElementById('toastIcon');
+
+    toast.className = `toast show ${type}`;
+    toastMsg.textContent = msg;
+
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else if (type === 'error') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    } else if (type === 'warning') {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+    } else {
+      iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    }
+    toastIcon.innerHTML = iconSvg;
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2600);
+  }
+
+  /* ================= LOG VIEWER MODAL ================= */
+  const logModal = document.getElementById('logModal');
+  const btnOpenLogViewer = document.getElementById('btnOpenLogViewer');
+  const btnCloseLogModal = document.getElementById('btnCloseLogModal');
+  const terminalLogBox = document.getElementById('terminalLogBox');
+  const btnClearLog = document.getElementById('btnClearLog');
+  const btnCopyLog = document.getElementById('btnCopyLog');
+
+  function appendLog(msg, level = 'info') {
+    const time = new Date().toTimeString().split(' ')[0];
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    let lvlClass = 'log-info';
+    let lvlText = '[INFO]';
+    if (level === 'warn') { lvlClass = 'log-warn'; lvlText = '[WARN]'; }
+    if (level === 'error') { lvlClass = 'log-error'; lvlText = '[ERROR]'; }
+    line.innerHTML = `<span class="log-time">[${time}]</span> <span class="${lvlClass}">${lvlText}</span> ${msg}`;
+    terminalLogBox.appendChild(line);
+    terminalLogBox.scrollTop = terminalLogBox.scrollHeight;
+  }
+
+  btnOpenLogViewer.addEventListener('click', () => logModal.classList.add('open'));
+  btnCloseLogModal.addEventListener('click', () => logModal.classList.remove('open'));
+  logModal.addEventListener('click', (e) => { if (e.target === logModal) logModal.classList.remove('open'); });
+
+  btnClearLog.addEventListener('click', () => {
+    terminalLogBox.innerHTML = '';
+    appendLog('Đã dọn sạch nhật ký khởi động.');
+    showToast('Đã xóa log hiển thị', 'info');
+  });
+
+  btnCopyLog.addEventListener('click', () => {
+    const text = terminalLogBox.innerText;
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast('Đã sao chép toàn bộ log vào clipboard!', 'success');
+    } catch(err) {
+      showToast('Không thể sao chép tự động', 'error');
+    }
+    document.body.removeChild(textArea);
+  });
+
+  /* ================= LAUNCH BUTTON ANIMATION ================= */
+  const btnPlay = document.getElementById('btnPlay');
+  const playText = document.getElementById('playText');
+  const launchBar = document.getElementById('launchBar');
+  let isLaunching = false;
+
+  btnPlay.addEventListener('click', () => {
+    if (isLaunching) return;
+    
+    // Kiểm tra trạng thái instance hiện tại
+    const opt = instanceSelect.options[instanceSelect.selectedIndex];
+    if (opt.dataset.status === 'need-download') {
+      showToast('Bản này chưa tải đủ tài nguyên! Vui lòng tải trước khi chơi.', 'warning');
+      appendLog('Không thể khởi chạy: Bản modpack còn thiếu asset files.', 'warn');
+      return;
+    }
+
+    isLaunching = true;
+    playText.textContent = 'ĐANG TẢI...';
+    launchBar.style.display = 'block';
+    launchBar.style.width = '0%';
+    appendLog(`Bắt đầu chạy client với user [${currentUsername.textContent}]...`);
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 20) + 12;
+      if (progress >= 100) {
+        progress = 100;
+        launchBar.style.width = '100%';
+        clearInterval(interval);
+        playText.textContent = 'GAME ĐANG CHẠY';
+        appendLog('Khởi chạy Forge client thành công! OpenGL 4.6 context OK.');
+        showToast('Minecraft khởi động thành công!', 'success');
+        
+        setTimeout(() => {
+          playText.textContent = 'VÀO GAME';
+          launchBar.style.display = 'none';
+          launchBar.style.width = '0%';
+          isLaunching = false;
+        }, 3000);
+      } else {
+        launchBar.style.width = progress + '%';
+      }
+    }, 140);
+  });
+
+  document.getElementById('btnOpenFolder').addEventListener('click', () => {
+    showToast('Đang mở thư mục: .minecraft/', 'info');
+  });
+
+  // Account Popover Toggle
+  userCard.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userPopover.classList.toggle('open');
+  });
+  document.addEventListener('click', () => {
+    userPopover.classList.remove('open');
+  });
+
+  /* ================= AMBIENT CANVAS BACKGROUND EFFECT ================= */
+  const canvas = document.getElementById('ambient-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let particles = [];
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    width = canvas.width = rect.width;
+    height = canvas.height = rect.height;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  class Particle {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = height + Math.random() * 20;
+      this.size = Math.random() * 2.5 + 0.8;
+      this.speedY = Math.random() * 0.7 + 0.25;
+      this.speedX = (Math.random() - 0.5) * 0.35;
+      this.alpha = Math.random() * 0.5 + 0.2;
+      this.decay = Math.random() * 0.003 + 0.0015;
+      this.color = Math.random() > 0.4 ? '224, 83, 44' : '229, 152, 64';
+    }
+    update() {
+      this.y -= this.speedY;
+      this.x += this.speedX;
+      this.alpha -= this.decay;
+      if (this.alpha <= 0 || this.y < -10) {
+        this.reset();
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = `rgba(${this.color}, 0.5)`;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 45; i++) {
+    const p = new Particle();
+    p.y = Math.random() * height;
+    particles.push(p);
+  }
+
+  function renderLoop() {
+    ctx.clearRect(0, 0, width, height);
+    const grad = ctx.createRadialGradient(width * 0.8, height * 0.3, 10, width * 0.8, height * 0.3, width * 0.6);
+    grad.addColorStop(0, 'rgba(224, 83, 44, 0.12)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(renderLoop);
+  }
+  renderLoop();
+</script>
+
+</body>
+</html>

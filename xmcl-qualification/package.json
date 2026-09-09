@@ -1,0 +1,17 @@
+{
+  "name": "mcpubg-launcher-v2",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "MCPubg clean-engine qualification; not a released launcher",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs tests/*.integration.mjs",
+    "spike:install": "node scripts/clean-install.mjs"
+  },
+  "dependencies": {
+    "@xmcl/core": "2.15.1",
+    "@xmcl/installer": "6.1.2"
+  },
+  "overrides": { "undici": "7.29.1" },
+  "engines": { "node": ">=22" }
+}

@@ -1,0 +1,36 @@
+{
+  "phase": "0-pack-qualification",
+  "version": "1.20.1-forge-47.4.10",
+  "modpack": {
+    "source": "D:/2026WORK/MCPubg/mods.zip",
+    "extracted_to": "D:/2026WORK/MCPubgLauncherV2/.runtime/clean/mods",
+    "total_jars": 49,
+    "all_sha256_match_zip": true,
+    "all_loaded_by_forge": 48,
+    "skipped_by_forge": ["kotlinforforge-4.12.0-all.jar"],
+    "skip_reason": "Forge 1.20.1 requires META-INF/mods.toml; kotlinforforge declares loader via MANIFEST only. The mod is still on the classpath as a library but Forge refuses to register it as a mod.",
+    "mod_loader_distribution": {"javafml": 45, "lowcodefml": 2, "kotlinforforge": 1}
+  },
+  "launch": {
+    "method": "headless --demo --width 1100 --height 700, killed at 90s with SIGTERM",
+    "diagnose_issues": 0,
+    "forge_mod_requirements": {"total": 111, "mandatory": 90, "optional": 21, "missing": 0},
+    "samples_loaded_during_session": {
+      "configs_written_under_config_dir": 31,
+      "modids_logged_with_bracket_prefix": 15,
+      "internalized_user_mod_count": 48
+    },
+    "render_reached": true,
+    "asset_loading": "TextureAtlas creation observed (particles 4096x4096, blocks 8192x8192) → game entered render thread, scanned all TACZ/LR models, mixed embeddium fallback warnings",
+    "fatal_errors": [],
+    "non_fatal_observations": [
+      "Mixin config yacl.mixins.json missing minVersion (warning, not fatal)",
+      "ClassNotFound toni.sodiumdynamiclights.SodiumDynamicLights — required by embeddium/oculus, no embeddium in pack",
+      "ClassNotFound org.jetbrains.annotations.ApiStatus$Internal — pulled by geckolib/mclib, missing annotations lib",
+      "IndexOutOfBoundsException in mclib@20 MathBuilder when parsing a molang expression '0-' emitted by a TACZ asset (non-fatal, log only)",
+      "AccountProfileKeyPairManager: failed to retrieve profile key pair (expected for offline/demo user)"
+    ]
+  },
+  "visual_verification": "deferred to user (no GUI session in this environment)",
+  "next_step": "user opens interactive desktop, runs `npm run launch` to see the menu screen and a singleplayer demo world. If menu appears, sign off Phase 0."
+}
