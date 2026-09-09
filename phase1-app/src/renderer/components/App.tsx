@@ -52,7 +52,7 @@ export function App() {
       return;
     }
     setLaunchState('launching');
-    const res = await window.launcher.launchInstance({ instanceId: state?.selectedInstanceId ?? 'cam', jvmArgs: [`-Xmx${state?.ramMaxMb ?? 4096}M`] });
+    const res = await window.launcher.launchInstance({ instanceId: state?.selectedInstanceId ?? 'campipiu', jvmArgs: [`-Xmx${state?.ramMaxMb ?? 4096}M`] });
     if (!res.ok) {
       setLaunchState('failed');
       showToast(res.error ?? 'Launch thất bại', 'error');
@@ -69,6 +69,16 @@ export function App() {
     await window.launcher.triggerUpdateInstance(id);
     const next = await window.launcher.getState();
     setState(next);
+  }, []);
+
+  const handleDelete = useCallback(async (id: string) => {
+    // TODO: wire to backend delete handler
+    showToast(`Xóa instance ${id} (chưa wire backend)`, 'info');
+  }, []);
+
+  const handleReorder = useCallback(async (_fromIdx: number, _toIdx: number) => {
+    // TODO: wire to backend reorder handler
+    showToast(`Sắp xếp lại instance (chưa wire backend)`, 'info');
   }, []);
 
   const handleOpenLog = useCallback(async () => {
@@ -102,7 +112,7 @@ export function App() {
       <main>
         <UpdateBanner />
         {tab === 'home' && <HomeScreen state={state} onLaunch={handleLaunch} launchState={launchState} />}
-        {tab === 'library' && <LibraryScreen state={state} onSelect={handleSelect} onUpdate={handleUpdate} />}
+        {tab === 'library' && <LibraryScreen state={state} onSelect={handleSelect} onUpdate={handleUpdate} onDelete={handleDelete} onReorder={handleReorder} />}
         {tab === 'settings' && (
           <SettingsScreen
             ramMax={state.ramMaxMb}

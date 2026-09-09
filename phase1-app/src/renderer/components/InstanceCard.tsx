@@ -1,11 +1,14 @@
 import type { Launcher } from '../../shared/types';
 import { showToast } from './Toast';
+import { IconTrash } from './Icons';
 
-export function InstanceCard({ inst, isSelected, onSelect, onUpdate }: {
+export function InstanceCard({ inst, isSelected, onSelect, onUpdate, showEdit, onDelete }: {
   inst: Launcher.Instance;
   isSelected: boolean;
   onSelect: (id: string) => void;
   onUpdate: (id: string) => void;
+  showEdit?: boolean;
+  onDelete?: () => void;
 }) {
   return (
     <div
@@ -13,6 +16,17 @@ export function InstanceCard({ inst, isSelected, onSelect, onUpdate }: {
       data-testid={`instance-card-${inst.id}`}
       data-instance-id={inst.id}
     >
+      {showEdit && onDelete && (
+        <button className="btn-delete-instance" data-testid={`delete-${inst.id}`} onClick={(e) => {
+          e.stopPropagation();
+          if (window.confirm(`Xóa instance "${inst.name}"?`)) {
+            onDelete();
+            showToast(`Đã xóa ${inst.name}`, 'success');
+          }
+        }}>
+          <IconTrash />
+        </button>
+      )}
       <div className="card-top">
         <div>
           <div className="card-title">{inst.name}</div>
@@ -27,19 +41,19 @@ export function InstanceCard({ inst, isSelected, onSelect, onUpdate }: {
         {inst.details.map((d, idx) => <div key={idx}>{d}</div>)}
       </div>
       <div className="card-footer">
-        {inst.actions.map((a) => (
+        <button
+          className={`btn-small ${isSelected ? 'btn-selected' : ''}`}
+          data-testid={`action-${inst.id}-select`}
+          onClick={() => { onSelect(inst.id); showToast(`Đã chọn ${inst.name}`, 'success'); }}
+        >
+          {isSelected ? 'ĐANG CHỌN' : 'Chọn chơi'}
+        </button>
+        {inst.actions.filter(a => a.id === 'update').map(a => (
           <button
             key={a.id}
             className="btn-small"
-            data-testid={`action-${inst.id}-${a.id}`}
-            onClick={() => {
-              if (a.id === 'select') { onSelect(inst.id); showToast(`Đã chọn ${inst.name}`, 'success'); }
-              else if (a.id === 'update') { onUpdate(inst.id); showToast('Đang cập nhật...', 'warn'); }
-              else if (a.id === 'verify') { showToast('Đang kiểm tra tính toàn vẹn...', 'info'); window.launcher.cleanup().then(() => showToast('Không phát hiện lỗi. Tất cả file OK.', 'success')); }
-              else if (a.id === 'download') { showToast('Đang tải tài nguyên...', 'info'); }
-              else if (a.id === 'open-folder') { showToast('Đang mở thư mục...', 'info'); window.launcher.openFolder('mods'); }
-              else { showToast(`Action ${a.id} (mock)`, 'info'); }
-            }}
+            data-testid={`action-${inst.id}-update`}
+            onClick={() => { onUpdate(inst.id); showToast('Đang cập nhật...', 'warn'); }}
           >{a.label}</button>
         ))}
       </div>
