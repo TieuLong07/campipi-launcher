@@ -55,22 +55,44 @@ function buildFallbackCommand(opts: BuildOptions, runtimeRoot: string, versionId
   const gameDir = opts.gameDir || runtimeRoot;
   const cpSep = process.platform === 'win32' ? ';' : ':';
   
-  // Read version JSON to get libraries
+  // Read version JSON
   const verJsonPath = join(runtimeRoot, 'versions', versionId, `${versionId}.json`);
   const verJson = JSON.parse(require('node:fs').readFileSync(verJsonPath, 'utf-8'));
   
-  // Build classpath from libraries
-  const libs: string[] = [];
-  if (verJson.libraries) {
+  // Forge 1.20.1 uses argument-based classpath in arguments.jvm
+  // Parse ${library_directory}/... patterns
+  const libraryDir = join(runtimeRoot, 'libraries');
+  let classpathJars: string[] = [];
+  
+  if (verJson.arguments?.jvm) {
+    for (const arg of verJson.arguments.jvm) {
+      if (typeof arg === 'string' && arg.includes('${library_directory}')) {
+        // Parse classpath string: ${library_directory}/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar${classpath_separator}...
+        const parts = arg.split('${classpath_separator}');
+        for (const part of parts) {
+          const cleaned = part.replace(/\$\{library_directory\}/g, libraryDir)
+            .replace(/\$\{version_name\}/g, versionId)
+            .trim();
+          if (cleaned.endsWith('.jar') && existsSync(cleaned)) {
+            classpathJars.push(cleaned);
+          }
+        }
+        break; // Found the classpath argument
+      }
+    }
+  }
+  
+  // Fallback: parse libraries array if no argument-based classpath
+  if (classpathJars.length === 0 && verJson.libraries) {
     for (const lib of verJson.libraries) {
       if (lib.name) {
-        // Convert Maven coordinate to path
         const parts = lib.name.split(':');
-        if (parts.length >= 4) {
-          const [group, artifact, version, classifier] = parts;
+        if (parts.length >= 3) {
+          const [group, artifact, version] = parts;
           const groupPath = group.replace(/\./g, '/');
-          const jarName = `${artifact}-${version}${classifier ? '-' + classifier : ''}.jar`;
-          libs.push(join(runtimeRoot, 'libraries', groupPath, artifact, version, jarName));
+          const jarName = `${artifact}-${version}.jar`;
+          const jarPath = join(libraryDir, groupPath, artifact, version, jarName);
+          if (existsSync(jarPath)) classpathJars.push(jarPath);
         }
       }
     }
@@ -78,9 +100,9 @@ function buildFallbackCommand(opts: BuildOptions, runtimeRoot: string, versionId
   
   // Add Forge client jar
   const forgeJar = join(runtimeRoot, 'versions', versionId, `${versionId}.jar`);
-  if (existsSync(forgeJar)) libs.push(forgeJar);
+  if (existsSync(forgeJar)) classpathJars.push(forgeJar);
   
-  const classpath = libs.join(cpSep);
+  const classpath = classpathJars.join(cpSep);
   
   // Build JVM args
   const jvmArgs = [
