@@ -1,6 +1,6 @@
 {
   "name": "mcpubg-launcher",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "MCPubg Launcher — minimal, dark-themed, Forge 1.20.1 modpack launcher. TLauncher-style shared .minecraft at %APPDATA%/.minecraft, per-instance folders at versions/<name>/.",
   "main": "dist/main/main.js",
   "author": "TieuLong07 <nguyenhlong2203@gmail.com>",

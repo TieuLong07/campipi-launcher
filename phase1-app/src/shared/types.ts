@@ -89,5 +89,7 @@ export namespace Launcher {
     // Mod Updates
     checkUpdate(): Promise<{ ok: boolean; hasUpdate?: boolean; latestVersion?: string; modsToAdd?: { filename: string; size: number }[]; modsToUpdate?: { filename: string; size: number }[]; modsToRemove?: string[]; totalSize?: number; error?: string }>;
     applyUpdate(): Promise<{ ok: boolean; error?: string }>;
+    // Campipiu install
+    installCampipiu(): Promise<{ success: boolean; modsInstalled: number; error?: string }>;
   }
 }

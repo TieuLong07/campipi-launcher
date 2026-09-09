@@ -41,6 +41,7 @@ const api: Launcher.IpcApi = {
   stopProxy: () => ipcRenderer.invoke(IPC.PROXY_STOP),
   checkUpdate: () => ipcRenderer.invoke(IPC.CHECK_UPDATE),
   applyUpdate: () => ipcRenderer.invoke(IPC.APPLY_UPDATE),
+  installCampipiu: () => ipcRenderer.invoke(IPC.INSTALL_CAMPIPIU),
 };
 
 contextBridge.exposeInMainWorld('launcher', api);

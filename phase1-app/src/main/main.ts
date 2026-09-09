@@ -205,6 +205,36 @@ ipcMain.handle(IPC.SET_RAM, (_e, mb: number) => {
 ipcMain.handle(IPC.CLEAN_CACHE, () => ({ freedBytes: 0 }));
 ipcMain.handle(IPC.CLEANUP, () => ({ removedFiles: 0 }));
 
+// ===== Campipiu install handler =====
+ipcMain.handle(IPC.INSTALL_CAMPIPIU, async (_e) => {
+  const { CampipiuInstaller } = require('./campipiu-installer');
+  const installer = new CampipiuInstaller(RUNTIME_ROOT);
+  
+  if (installer.isInstalled()) {
+    return { success: true, modsInstalled: 0, message: 'Already installed' };
+  }
+
+  emit({ ts: Date.now(), level: 'info', stream: 'launcher', text: 'Bắt đầu cài đặt CamPiuPiu...' });
+  
+  const result = await installer.install((_progress: { downloaded: number; total: number; filename: string; bytesDownloaded: number; bytesTotal: number }) => {
+    emit({ 
+      ts: Date.now(), 
+      level: 'info', 
+      stream: 'launcher', 
+      text: `Đang tải ${_progress.filename} (${_progress.downloaded}/${_progress.total})...` 
+    });
+  });
+
+  if (result.success) {
+    emit({ ts: Date.now(), level: 'ok', stream: 'launcher', text: `Cài đặt CamPiuPiu thành công: ${result.modsInstalled} mods` });
+    refreshState();
+  } else {
+    emit({ ts: Date.now(), level: 'error', stream: 'launcher', text: `Lỗi cài đặt CamPiuPiu: ${result.error}` });
+  }
+
+  return result;
+});
+
 // ===== Phase 3B: Real launch =====
 ipcMain.handle(IPC.LAUNCH, async (_e, opts: { instanceId?: string; version?: string; xmxMb?: number; xmsMb?: number; jvmArgs?: string[] }) => {
   // Renderer sends instanceId (e.g. "cam") — resolve to version folder name and gameDir

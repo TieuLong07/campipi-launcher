@@ -30,6 +30,7 @@ export const IPC = {
   REPAIR_CHECK: 'launcher:repair-check',
   REPAIR_FIX: 'launcher:repair-fix',
   ACCOUNTS_SET_ACTIVE_FOR_LAUNCH: 'accounts:set-active-for-launch',
+  INSTALL_CAMPIPIU: 'LAUNCHER:INSTALL_CAMPIPIU',
 } as const;
 
 export type IpcChannel = typeof IPC[keyof typeof IPC];

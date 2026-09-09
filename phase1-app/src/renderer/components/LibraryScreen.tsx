@@ -20,7 +20,7 @@ export function LibraryScreen({ state, onSelect, onUpdate, onDelete, onReorder }
   onDelete?: (id: string) => void;
   onReorder?: (fromIdx: number, toIdx: number) => void;
 }) {
-  // Check if campipiu exists locally
+  // Only campipiu = official modpack; everything else = user instances
   const campipiu = state.instances.find(i => i.id === CAMPIPIU_ID);
   const userInstances = state.instances.filter(i => i.id !== CAMPIPIU_ID);
   const [editing, setEditing] = useState(false);
@@ -73,9 +73,20 @@ export function LibraryScreen({ state, onSelect, onUpdate, onDelete, onReorder }
                 <div>{CAMPIPIU_META.modsCount} mods</div>
               </div>
               <div className="card-footer">
-                <button className="btn-small btn-install" data-testid="btn-install-campipiu" onClick={() => {
+                <button className="btn-small btn-install" data-testid="btn-install-campipiu" onClick={async () => {
                   showToast('Đang cài đặt CamPiuPiu...', 'info');
-                  // TODO: wire to backend install handler
+                  try {
+                    const result = await window.launcher.installCampipiu();
+                    if (result.success) {
+                      showToast(`Cài đặt thành công: ${result.modsInstalled} mods`, 'success');
+                      // Force re-render by reloading page
+                      window.location.reload();
+                    } else {
+                      showToast(`Lỗi cài đặt: ${result.error}`, 'error');
+                    }
+                  } catch (err) {
+                    showToast(`Lỗi cài đặt: ${err}`, 'error');
+                  }
                 }}>
                   <IconDownload /> Cài đặt
                 </button>
