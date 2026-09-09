@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createWriteStream } from 'node:fs';
 
@@ -54,9 +54,10 @@ export class CampipiuInstaller {
   /**
    * Install campipiu from scratch
    * 1. Create folder structure
-   * 2. Download manifest
-   * 3. Download all mods
-   * 4. Save version file
+   * 2. Copy version JSON + JAR from cam instance
+   * 3. Download manifest
+   * 4. Download all mods
+   * 5. Save version file
    */
   async install(
     onProgress?: (progress: InstallProgress) => void
@@ -71,6 +72,35 @@ export class CampipiuInstaller {
       }
       if (!existsSync(modsDir)) {
         mkdirSync(modsDir, { recursive: true });
+      }
+
+      // Copy version JSON + JAR from cam instance
+      const camDir = join(this.runtimeRoot, 'versions', 'cam');
+      const camJson = join(camDir, 'cam.json');
+      const camJar = join(camDir, 'cam.jar');
+      
+      try {
+        if (existsSync(camJson)) {
+          // Read cam.json and replace "id": "cam" with "id": "campipiu"
+          const camJsonContent = readFileSync(camJson, 'utf-8');
+          const campipiuJsonContent = camJsonContent.replace(/"id"\s*:\s*"cam"/, '"id": "campipiu"');
+          writeFileSync(join(instanceDir, 'campipiu.json'), campipiuJsonContent, 'utf-8');
+          console.log('[CampipiuInstaller] Created campipiu.json');
+        } else {
+          console.warn('[CampipiuInstaller] cam.json not found:', camJson);
+        }
+        
+        if (existsSync(camJar)) {
+          // Copy JAR (binary copy)
+          const { copyFileSync } = await import('node:fs');
+          copyFileSync(camJar, join(instanceDir, 'campipiu.jar'));
+          console.log('[CampipiuInstaller] Copied campipiu.jar');
+        } else {
+          console.warn('[CampipiuInstaller] cam.jar not found:', camJar);
+        }
+      } catch (copyErr) {
+        console.error('[CampipiuInstaller] Error copying version files:', copyErr);
+        // Continue anyway - mods are more important
       }
 
       // Fetch manifest
