@@ -17,10 +17,7 @@ import { spawn, ChildProcess } from 'node:child_process';
 import { existsSync, mkdirSync, createWriteStream } from 'node:fs';
 import { dirname } from 'node:path';
 import { buildForgeCommand, type BuildOptions } from './forge-command';
-import { ProxyManager } from './proxy-manager';
-
-// Global proxy manager instance
-const proxyManager = new ProxyManager();
+import type { ProxyManager } from './proxy-manager';
 
 export interface LaunchOptions extends BuildOptions {
   logFilePath: string;       // path to write full log
@@ -29,6 +26,8 @@ export interface LaunchOptions extends BuildOptions {
   onError?: (err: Error) => void;
   /** If true, start WebSocket proxy before launching game */
   useProxy?: boolean;
+  /** Shared proxy manager instance from main.ts (avoids duplicate instances) */
+  proxyManager?: ProxyManager;
 }
 
 export interface LaunchHandle {
@@ -45,10 +44,11 @@ export function listActive(): { pid: number }[] {
 }
 
 export async function launchInstance(opts: LaunchOptions): Promise<LaunchHandle> {
+  const pm = opts.proxyManager;
   // 0. Start proxy if needed (for server connection)
-  if (opts.useProxy) {
+  if (opts.useProxy && pm) {
     try {
-      await proxyManager.start();
+      await pm.start();
       console.log('[Launcher] Proxy started on port 25566');
     } catch (err) {
       console.error('[Launcher] Proxy start failed:', err);
@@ -116,8 +116,8 @@ export async function launchInstance(opts: LaunchOptions): Promise<LaunchHandle>
       handle.state = 'killed';
       await killTree(proc.pid);
       // Stop proxy if running
-      if (opts.useProxy && proxyManager.isRunning()) {
-        await proxyManager.stop();
+      if (opts.useProxy && pm && pm.isRunning()) {
+        await pm.stop();
         console.log('[Launcher] Proxy stopped');
       }
       // Give Node 200ms to fire the exit event, then force-cleanup

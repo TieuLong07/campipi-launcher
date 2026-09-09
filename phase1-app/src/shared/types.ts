@@ -13,6 +13,7 @@ export namespace Launcher {
     id: string;
     name: string;
     version: string;          // e.g. "1.20.1-forge-47.4.10"
+    modsCount?: number;       // number of .jar mods in instance
     badge?: { label: string; kind: 'active' | 'neutral' };
     status: InstanceStatus;
     statusText: string;

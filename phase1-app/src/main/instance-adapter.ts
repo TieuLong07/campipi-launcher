@@ -3,7 +3,7 @@
  * converts it into the renderer-facing state. This is the single source of
  * truth for "what instances does the user have right now?".
  */
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import type { Launcher } from '@shared/types';
 
@@ -85,6 +85,7 @@ function toRendererInstance(raw: RawInstance, isSelected: boolean): Launcher.Ins
     id: raw.id,
     name: humanizeName(raw.id),
     version: raw.versionFolder,
+    modsCount: raw.modsCount,
     badge: isSelected
       ? { label: 'ĐANG CHỌN', kind: 'active' }
       : isLite(raw.id) ? { label: 'TIẾT KIỆM RAM', kind: 'neutral' } : undefined,
@@ -100,6 +101,18 @@ function humanizeName(id: string): string {
   return id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 function isLite(id: string): boolean { return id.includes('lite'); }
+
+// Persist selected instance across restarts
+const SELECTION_FILE = join(dirname(process.execPath), '.mcpubg-selection');
+function loadSelectedId(): string | null {
+  try {
+    if (existsSync(SELECTION_FILE)) return readFileSync(SELECTION_FILE, 'utf-8').trim();
+  } catch { /* ignore */ }
+  return null;
+}
+function saveSelectedId(id: string): void {
+  try { writeFileSync(SELECTION_FILE, id); } catch { /* ignore */ }
+}
 function statusTextFor(s: Launcher.InstanceStatus, mods: number): string {
   switch (s) {
     case 'ready': return 'Sẵn sàng vào game';
@@ -149,16 +162,18 @@ export function readState(runtimeRoot: string, javaPath: string, javaVersion: st
   if (raws.length === 0) {
     throw new Error(`No instances found under ${runtimeRoot}. Run clean-install.mjs first.`);
   }
-  // Pick the first instance with a client jar; fall back to the first one.
-  // We prefer a complete install over an empty vanilla placeholder.
-  const ready = raws.find((r) => r.hasClient) ?? raws[0];
+  // Restore persisted selection, or pick first instance with a client jar
+  const savedId = loadSelectedId();
+  const saved = savedId && raws.some(r => r.id === savedId) ? raws.find(r => r.id === savedId) : null;
+  const ready = saved ?? raws.find((r) => r.hasClient) ?? raws[0];
   const selectedId = ready.id;
+  saveSelectedId(selectedId);  // persist for next boot
   return {
     instances: raws.map((r) => toRendererInstance(r, r.id === selectedId)),
     selectedInstanceId: selectedId,
     java: { path: javaPath, version: javaVersion, ok: !!javaPath },
-    launcherVersion: '0.0.2-alpha',
-    hasUpdate: true,
+    launcherVersion: require('../../package.json').version ?? '0.0.2',
+    hasUpdate: false,  // UpdateBanner checks independently via IPC
     ramMaxMb: 4096,
   };
 }

@@ -27,6 +27,9 @@ export const IPC = {
   PROXY_STOP: 'launcher:proxy-stop',
   CHECK_UPDATE: 'launcher:check-update',
   APPLY_UPDATE: 'launcher:apply-update',
+  REPAIR_CHECK: 'launcher:repair-check',
+  REPAIR_FIX: 'launcher:repair-fix',
+  ACCOUNTS_SET_ACTIVE_FOR_LAUNCH: 'accounts:set-active-for-launch',
 } as const;
 
 export type IpcChannel = typeof IPC[keyof typeof IPC];

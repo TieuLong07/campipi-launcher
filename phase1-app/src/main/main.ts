@@ -161,6 +161,8 @@ ipcMain.handle(IPC.SELECT_INSTANCE, (_e: IpcMainInvokeEvent, id: string) => {
   if (!appState) refreshState();
   appState!.selectedInstanceId = id;
   appState!.instances = appState!.instances.map(i => ({ ...i, badge: i.id === id ? { label: 'ĐANG CHỌN', kind: 'active' } : undefined }));
+  // Persist selection for next boot
+  try { require('node:fs').writeFileSync(join(require('node:path').dirname(process.execPath), '.mcpubg-selection'), id); } catch { /* ignore */ }
 });
 ipcMain.handle(IPC.UPDATE_INSTANCE, (_e, id: string) => {
   emit({ ts: Date.now(), level: 'info', stream: 'launcher', text: `Bắt đầu cập nhật instance: ${id}` });
@@ -168,11 +170,12 @@ ipcMain.handle(IPC.UPDATE_INSTANCE, (_e, id: string) => {
   return Promise.resolve();
 });
 ipcMain.handle(IPC.OPEN_FOLDER, (_e, which: 'mods' | 'logs' | 'config' | 'root') => {
+  const selectedId = appState?.selectedInstanceId ?? 'cam';
   const map: Record<typeof which, string> = {
-    mods: join(RUNTIME_ROOT, 'mods'),
+    mods: join(RUNTIME_ROOT, 'versions', selectedId, 'mods'),
     logs: join(RUNTIME_ROOT, 'logs'),
-    config: join(RUNTIME_ROOT, 'config'),
-    root: RUNTIME_ROOT,
+    config: join(RUNTIME_ROOT, 'versions', selectedId, 'config'),
+    root: join(RUNTIME_ROOT, 'versions', selectedId),
   };
   shell.openPath(map[which]);
 });
@@ -237,6 +240,7 @@ ipcMain.handle(IPC.LAUNCH, async (_e, opts: { instanceId?: string; version?: str
       onLog: (line: any) => emit({ ts: Date.now(), level: line.level || 'info', stream: 'forge', text: line.text || line }),
       onError: (err: Error) => emit({ ts: Date.now(), level: 'error', stream: 'launcher', text: err.message }),
       useProxy: true, // Enable WebSocket proxy for server connection
+      proxyManager, // Share the singleton from main.ts
     } as any);
     activeHandles.set(handle.pid!, { stop: handle.stop });
     setLaunchState('running');
@@ -306,8 +310,11 @@ ipcMain.handle(IPC.APPLY_UPDATE, async () => {
 });
 
 // ===== Phase 4: Repair =====
-ipcMain.handle('LAUNCHER:REPAIR_CHECK', () => checkRuntime({ runtimeRoot: RUNTIME_ROOT, version: '1.20.1-forge-47.4.10' }));
-ipcMain.handle('LAUNCHER:REPAIR_FIX', (_e, action: string) => {
+ipcMain.handle(IPC.REPAIR_CHECK, () => {
+  const selectedId = appState?.selectedInstanceId ?? 'cam';
+  return checkRuntime({ runtimeRoot: RUNTIME_ROOT, version: selectedId, instanceName: selectedId });
+});
+ipcMain.handle(IPC.REPAIR_FIX, (_e, action: string) => {
   switch (action) {
     case 'rotate-logs': {
       const n = rotateLogs(join(RUNTIME_ROOT, 'logs'), 10);
@@ -326,7 +333,7 @@ ipcMain.handle('LAUNCHER:REPAIR_FIX', (_e, action: string) => {
 });
 
 // ===== Account =====
-ipcMain.handle('LAUNCHER:ACCOUNTS_SET_ACTIVE_FOR_LAUNCH', (_e, account: { username: string; uuid: string; userType: 'offline' | 'microsoft' | 'azauth' }) => {
+ipcMain.handle(IPC.ACCOUNTS_SET_ACTIVE_FOR_LAUNCH, (_e, account: { username: string; uuid: string; userType: 'offline' | 'microsoft' | 'azauth' }) => {
   activeAccount = account;
   emit({ ts: Date.now(), level: 'info', stream: 'launcher', text: `Đã chọn tài khoản: ${account.username} (${account.userType})` });
 });

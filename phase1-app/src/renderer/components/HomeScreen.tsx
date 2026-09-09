@@ -8,6 +8,7 @@ export function HomeScreen({ state, onLaunch, launchState }: {
   launchState: 'idle' | 'launching' | 'running' | 'failed';
 }) {
   const selected = state.instances.find((i) => i.id === state.selectedInstanceId) ?? state.instances[0];
+  const selectedMods = selected?.modsCount ?? '—';
   const playLabel = launchState === 'launching' ? 'ĐANG VÀO...'
                   : launchState === 'running'   ? 'ĐANG CHẠY'
                   : launchState === 'failed'    ? 'THỬ LẠI'
@@ -70,7 +71,7 @@ export function HomeScreen({ state, onLaunch, launchState }: {
             </div>
             <div className="hero-stats" data-testid="hero-stats">
               <div className="stat">
-                <div className="stat-value">49</div>
+                <div className="stat-value">{selectedMods}</div>
                 <div className="stat-label">Mods</div>
               </div>
               <div className="stat">

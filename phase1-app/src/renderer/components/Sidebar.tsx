@@ -3,12 +3,13 @@ import { IconHome, IconGrid, IconSettings, IconEdit, IconLogout } from './Icons'
 
 type Tab = 'home' | 'library' | 'settings';
 
-export function Sidebar({ tab, onTab, hasUpdate, account, onOpenAccountModal }: {
+export function Sidebar({ tab, onTab, hasUpdate, account, onOpenAccountModal, launcherVersion }: {
   tab: Tab;
   onTab: (t: Tab) => void;
   hasUpdate: boolean;
   account: { username: string; type: string } | null;
   onOpenAccountModal: () => void;
+  launcherVersion?: string;
 }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const initials = (account?.username ?? 'TL').slice(0, 2).toUpperCase();
@@ -18,7 +19,7 @@ export function Sidebar({ tab, onTab, hasUpdate, account, onOpenAccountModal }: 
         <div className="brand-icon">M</div>
         <div className="brand-meta">
           <h2>MCPubg</h2>
-          <span>v0.0.2-alpha</span>
+          <span>v{launcherVersion ?? '0.2.0'}</span>
         </div>
       </div>
       <div className="nav-group">

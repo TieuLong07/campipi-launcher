@@ -23,7 +23,8 @@ export function ToastHost() {
   useEffect(() => {
     setterRef = (msg, type = 'success') => {
       setToast({ msg, type, visible: true });
-      window.setTimeout(() => setToast((t) => ({ ...t, visible: false })), 2400);
+      const duration = type === 'error' ? 5000 : type === 'warn' ? 3500 : 2400;
+      window.setTimeout(() => setToast((t) => ({ ...t, visible: false })), duration);
     };
     return () => { setterRef = null; };
   }, []);

@@ -10,11 +10,12 @@ interface ProxyStatus {
   clients: number;
 }
 
-export function SettingsScreen({ ramMax, onRam, onOpenLog, onClean }: {
+export function SettingsScreen({ ramMax, onRam, onOpenLog, onClean, javaVersion }: {
   ramMax: number;
   onRam: (mb: number) => void;
   onOpenLog: () => void;
   onClean: () => void;
+  javaVersion?: string;
 }) {
   const [localRam, setLocalRam] = useState(ramMax);
   const [proxyStatus, setProxyStatus] = useState<ProxyStatus | null>(null);
@@ -101,7 +102,7 @@ export function SettingsScreen({ ramMax, onRam, onOpenLog, onClean }: {
             <h4>Phiên bản Java</h4>
             <p>Tự động nhận diện JDK 17</p>
           </div>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 12, color: 'var(--green)' }} data-testid="java-status">Java 17.0.20 (x64) OK</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 12, color: 'var(--green)' }} data-testid="java-status">Java {javaVersion ?? '17.0.20'} (x64) OK</span>
         </div>
         <div className="setting-item" data-testid="setting-proxy">
           <div className="setting-text">

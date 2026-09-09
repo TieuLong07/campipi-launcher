@@ -98,7 +98,7 @@ export function App() {
 
   return (
     <div className="app-shell" data-testid="app-shell">
-      <Sidebar tab={tab} onTab={setTab} hasUpdate={state.hasUpdate} account={account} onOpenAccountModal={() => setAccountModalOpen(true)} />
+      <Sidebar tab={tab} onTab={setTab} hasUpdate={state.hasUpdate} account={account} onOpenAccountModal={() => setAccountModalOpen(true)} launcherVersion={state.launcherVersion} />
       <main>
         <UpdateBanner />
         {tab === 'home' && <HomeScreen state={state} onLaunch={handleLaunch} launchState={launchState} />}
@@ -109,6 +109,7 @@ export function App() {
             onRam={(mb) => { window.launcher.setRamMax(mb); setState({ ...state, ramMaxMb: mb }); }}
             onOpenLog={handleOpenLog}
             onClean={handleClean}
+            javaVersion={state.java.version}
           />
         )}
       </main>

@@ -25,6 +25,7 @@ export interface CheckResult {
 export interface RepairOptions {
   runtimeRoot: string;
   version: string;
+  instanceName?: string;  // per-instance mods dir (default: 'cam')
 }
 
 export function checkRuntime(opts: RepairOptions): CheckResult[] {
@@ -80,8 +81,9 @@ export function checkRuntime(opts: RepairOptions): CheckResult[] {
     out.push({ name: 'version-json', status: 'ok', message: 'version.json OK' });
   }
 
-  // 4. mods dir
-  const modsDir = join(runtimeRoot, 'mods');
+  // 4. mods dir (per-instance)
+  const instanceName = opts.instanceName ?? 'cam';
+  const modsDir = join(runtimeRoot, 'versions', instanceName, 'mods');
   if (!existsSync(modsDir)) {
     out.push({
       name: 'mods-dir',
