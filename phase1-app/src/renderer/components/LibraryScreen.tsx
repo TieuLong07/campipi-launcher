@@ -20,12 +20,14 @@ export function LibraryScreen({ state, onSelect, onUpdate, onDelete, onReorder }
   onDelete?: (id: string) => void;
   onReorder?: (fromIdx: number, toIdx: number) => void;
 }) {
-  // Only campipiu = official modpack; everything else = user instances
+  // Check if campipiu exists locally
   const campipiu = state.instances.find(i => i.id === CAMPIPIU_ID);
   const userInstances = state.instances.filter(i => i.id !== CAMPIPIU_ID);
   const [editing, setEditing] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [installing, setInstalling] = useState(false);
+  const [installProgress, setInstallProgress] = useState<{ downloaded: number; total: number; filename: string } | null>(null);
 
   const handleDragStart = (idx: number) => setDragIdx(idx);
   const handleDragOver = (e: React.DragEvent, idx: number) => { e.preventDefault(); setOverIdx(idx); };
@@ -35,6 +37,27 @@ export function LibraryScreen({ state, onSelect, onUpdate, onDelete, onReorder }
     }
     setDragIdx(null);
     setOverIdx(null);
+  };
+
+  const handleInstall = async () => {
+    setInstalling(true);
+    setInstallProgress({ downloaded: 0, total: 0, filename: 'Đang chuẩn bị...' });
+    
+    try {
+      const result = await window.launcher.installCampipiu();
+      if (result.success) {
+        showToast(`Cài đặt thành công: ${result.modsInstalled} mods`, 'success');
+        // Refresh state - the component will re-render and show instance card
+        await window.launcher.getState();
+      } else {
+        showToast(`Lỗi cài đặt: ${result.error}`, 'error');
+      }
+    } catch (err) {
+      showToast(`Lỗi cài đặt: ${err}`, 'error');
+    } finally {
+      setInstalling(false);
+      setInstallProgress(null);
+    }
   };
 
   return (
@@ -63,32 +86,42 @@ export function LibraryScreen({ state, onSelect, onUpdate, onDelete, onReorder }
                   <div className="card-title">{CAMPIPIU_META.name}</div>
                   <div className="card-version">{CAMPIPIU_META.version}</div>
                 </div>
-                <span className="badge neutral">CHƯA CÀI</span>
+                <span className="badge neutral">{installing ? 'ĐANG CÀI' : 'CHƯA CÀI'}</span>
               </div>
               <div className="card-details">
-                <div className="status-badge">
-                  <span className="status-dot empty" /> Chưa cài đặt trên máy
-                </div>
-                <div>{CAMPIPIU_META.description}</div>
-                <div>{CAMPIPIU_META.modsCount} mods</div>
+                {installing && installProgress ? (
+                  <div className="install-progress" data-testid="install-progress">
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${installProgress.total > 0 ? (installProgress.downloaded / installProgress.total) * 100 : 0}%` }} />
+                    </div>
+                    <div className="progress-text">
+                      {installProgress.total > 0 
+                        ? `${installProgress.downloaded}/${installProgress.total} mods`
+                        : installProgress.filename}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="status-badge">
+                      <span className="status-dot empty" /> Chưa cài đặt trên máy
+                    </div>
+                    <div>{CAMPIPIU_META.description}</div>
+                    <div>{CAMPIPIU_META.modsCount} mods</div>
+                  </>
+                )}
               </div>
               <div className="card-footer">
-                <button className="btn-small btn-install" data-testid="btn-install-campipiu" onClick={async () => {
-                  showToast('Đang cài đặt CamPiuPiu...', 'info');
-                  try {
-                    const result = await window.launcher.installCampipiu();
-                    if (result.success) {
-                      showToast(`Cài đặt thành công: ${result.modsInstalled} mods`, 'success');
-                      // Force re-render by reloading page
-                      window.location.reload();
-                    } else {
-                      showToast(`Lỗi cài đặt: ${result.error}`, 'error');
-                    }
-                  } catch (err) {
-                    showToast(`Lỗi cài đặt: ${err}`, 'error');
-                  }
-                }}>
-                  <IconDownload /> Cài đặt
+                <button 
+                  className={`btn-small ${installing ? 'btn-installing' : 'btn-install'}`} 
+                  data-testid="btn-install-campipiu" 
+                  onClick={handleInstall}
+                  disabled={installing}
+                >
+                  {installing ? (
+                    <>Đang cài đặt...</>
+                  ) : (
+                    <><IconDownload /> Cài đặt</>
+                  )}
                 </button>
               </div>
             </div>

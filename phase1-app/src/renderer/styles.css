@@ -270,3 +270,10 @@ canvas#ambient-canvas { position: absolute; top: 0; left: 0; width: 100%; height
 
 /* === Campipiu placeholder card === */
 .campipiu-placeholder { border-style: dashed; border-color: var(--brand); background: linear-gradient(135deg, rgba(224, 83, 44, 0.05) 0%, transparent 100%); }
+
+/* === Install progress === */
+.install-progress { display: flex; flex-direction: column; gap: 8px; }
+.progress-bar { height: 6px; background: var(--panel-elevated); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand) 0%, var(--brand-hover) 100%); transition: width 200ms ease; }
+.progress-text { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.btn-installing { background: var(--panel-elevated) !important; color: var(--text-muted) !important; border-color: var(--border) !important; cursor: not-allowed !important; }
