@@ -86,7 +86,7 @@ export namespace Launcher {
     restartProxy(): Promise<void>;
     stopProxy(): Promise<void>;
     // Mod Updates
-    checkUpdate(): Promise<{ ok: boolean; hasUpdate?: boolean; latestVersion?: string; modsToAdd?: { filename: string; size: number }[]; totalSize?: number; error?: string }>;
+    checkUpdate(): Promise<{ ok: boolean; hasUpdate?: boolean; latestVersion?: string; modsToAdd?: { filename: string; size: number }[]; modsToUpdate?: { filename: string; size: number }[]; modsToRemove?: string[]; totalSize?: number; error?: string }>;
     applyUpdate(): Promise<{ ok: boolean; error?: string }>;
   }
 }
